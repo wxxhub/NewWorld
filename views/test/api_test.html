@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>API test</title>
+        
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script>
+            function Test() {
+                // 请求数据名
+                let postData = "name=test_data"
+                
+                // 发送请求
+                axios.post('/api', postData)
+                .then (function (response) {
+                    startParse(response.data)
+                    console.log(response);
+        
+                })
+                .catch(function (error) {
+
+                    alert(error);
+                    console.log(error);
+                });
+            }
+
+            // 解析请求数据
+            function startParse(data) {
+                var datas = JSON.parse(data)
+
+                for (var i = 0; i < datas.length; i++) {
+                    alert(datas[i].name)
+                    alert(datas[i].commit)
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <input type="button" onclick="Test()" value="test">
+    </body>
+</html>
