@@ -23,7 +23,7 @@ func (a *APIController) Get() {
 func (a *APIController) Post() {
 	name := a.GetString("name")
 
-	fmt.Printf("I'm get [%s]", name)
+	fmt.Printf("I'm get [%s]\n", name)
 	switch name {
 	case "test_data":
 		a.returnTestData()
@@ -36,6 +36,7 @@ func (a *APIController) Post() {
 func (a *APIController) returnTestData() {
 	testData := model.GetTestData()
 	datas, _ := json.Marshal(testData)
+	fmt.Println(string(datas))
 	a.Data["json"] = string(datas)
 	a.ServeJSON()
 }

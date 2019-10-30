@@ -4,6 +4,7 @@
         <title>API test</title>
         
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="/static/js/xml.js"></script>
         <script>
             function Test() {
                 // 请求数据名
@@ -17,7 +18,6 @@
         
                 })
                 .catch(function (error) {
-
                     alert(error);
                     console.log(error);
                 });
@@ -25,16 +25,40 @@
 
             // 解析请求数据
             function startParse(data) {
-                var datas = JSON.parse(data)
+                var datas = JSON.parse(data);
+                var txt = document.getElementById("txt");
 
                 for (var i = 0; i < datas.length; i++) {
-                    alert(datas[i].name)
-                    alert(datas[i].commit)
+                    var divs = document.createElement("div");
+                    var name_p = document.createElement("p");
+                    var text_p = document.createElement("p");
+                    
+                    divs.setAttribute("class","creatediv");
+                    name_p.setAttribute("class","createdivs");
+                    text_p.setAttribute("class","createdivs");
+                    
+                    name_p.innerHTML=datas[i].name
+                    text_p.innerHTML=datas[i].text
+                    divs.appendChild(name_p);
+                    divs.appendChild(text_p);
+                    // alert(datas[i].name)
+                    // alert(datas[i].commit)
+
+                    if (txt.children.length == 0) {
+                        txt.appendChild(divs);
+                    } else {
+                        txt.insertBefore(divs, get_firstChild(txt));
+                    }
                 }
             }
         </script>
     </head>
     <body>
-        <input type="button" onclick="Test()" value="test">
+        <div>
+                <input type="button" onclick="Test()" value="test">
+        </div>
+        <div id="txt">
+
+        </div>
     </body>
 </html>
