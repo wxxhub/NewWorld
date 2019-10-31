@@ -6,7 +6,7 @@ import (
 
 	"github.com/astaxie/beego"
 
-	model "NewWorld/models"
+	models "NewWorld/models"
 )
 
 // APIController .
@@ -34,7 +34,7 @@ func (a *APIController) Post() {
 
 // return TestData .
 func (a *APIController) returnTestData() {
-	testData := model.GetTestData()
+	testData := models.GetTestData()
 	datas, _ := json.Marshal(testData)
 	fmt.Println(string(datas))
 	a.Data["json"] = string(datas)
