@@ -6,7 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 
-	"fmt"
+	// "fmt"
 	"strings"
 )
 
@@ -19,20 +19,14 @@ var FilterUser = func(ctx *context.Context) {
 		name, nameOk := ctx.Input.Session("name").(string)
 		code, codeOk := ctx.Input.Session("unique_code").(string)
 
-		println(name)
-		println(nameOk)
-		println(code)
-		println(codeOk)
-		if !nameOk && !codeOk {
+		if !nameOk || !codeOk {
 			ctx.Redirect(302, "/login")
-		} else if name != ctx.GetCookie("name") && code != ctx.GetCookie("unique_code") {
+		} else if name != ctx.GetCookie("name") || code != ctx.GetCookie("unique_code") {
 			ctx.Redirect(302, "/login")
 		}
 
-		fmt.Println("pass!")
 	}
 
-	fmt.Println("login...!")
 }
 
 func main() {
