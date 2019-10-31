@@ -1,5 +1,5 @@
 # NewWorld
-![](static/img/icon.png)
+![](static/img/small_logo.png)
 
 ## API 
 |API |作用 |参数 |
