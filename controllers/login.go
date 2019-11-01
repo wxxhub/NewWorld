@@ -3,8 +3,11 @@ package controllers
 import (
 	models "NewWorld/models"
 	"encoding/json"
+	"strconv"
 
 	"github.com/astaxie/beego"
+
+	"time"
 )
 
 // LoginController .
@@ -16,7 +19,6 @@ var uniqueModel = models.GetInstance(1)
 
 // Get .
 func (l *LoginController) Get() {
-	// l.Ctx.WriteString("Yes, you find it.")
 	l.TplName = "test/login_test.html"
 }
 
@@ -30,6 +32,7 @@ func (l *LoginController) Post() {
 	var result string
 	if ok {
 		uniqueCode := getUniqueCode()
+		println("uniqueCode:" + uniqueCode)
 		l.SetSession("name", name)
 		l.SetSession("unique_code", uniqueCode)
 		l.Ctx.SetCookie("name", name)
@@ -46,5 +49,8 @@ func (l *LoginController) Post() {
 
 // getUniqueCode .
 func getUniqueCode() (code string) {
-	return "123"
+	end := time.Now().Unix()
+	head := time.Now().Nanosecond()
+	data := strconv.FormatInt(int64(head), 32) + strconv.FormatInt(int64(end), 32)
+	return data
 }

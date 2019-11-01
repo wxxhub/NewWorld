@@ -36,7 +36,7 @@ func (a *APIController) Post() {
 func (a *APIController) returnTestData() {
 	testData := models.GetTestData()
 	datas, _ := json.Marshal(testData)
-	fmt.Println(string(datas))
+	// fmt.Println(string(datas))
 	a.Data["json"] = string(datas)
 	a.ServeJSON()
 }
