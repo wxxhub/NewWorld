@@ -2,7 +2,6 @@ package controllers
 
 import (
 	models "NewWorld/models"
-	"encoding/json"
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -29,7 +28,6 @@ func (l *LoginController) Post() {
 
 	ok := uniqueModel.AuthenticateUser(name, pwd)
 
-	var result string
 	if ok {
 		uniqueCode := getUniqueCode()
 		println("uniqueCode:" + uniqueCode)
@@ -37,14 +35,10 @@ func (l *LoginController) Post() {
 		l.SetSession("unique_code", uniqueCode)
 		l.Ctx.SetCookie("name", name)
 		l.Ctx.SetCookie("unique_code", uniqueCode)
-		result = "ok"
+		l.Ctx.Redirect(302, "/")
 	} else {
-		result = "false"
+		l.Ctx.ResponseWriter.WriteHeader(401)
 	}
-
-	data, _ := json.Marshal(result)
-	l.Data["json"] = string(data)
-	l.ServeJSON()
 }
 
 // getUniqueCode .

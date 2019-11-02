@@ -16,6 +16,7 @@ var FilterUser = func(ctx *context.Context) {
 	_, nameOk := ctx.Input.Session("name").(string)
 
 	if !ok && !nameOk {
+		ctx.ResponseWriter.WriteHeader(401)
 		ctx.Redirect(302, "/login")
 	}
 
