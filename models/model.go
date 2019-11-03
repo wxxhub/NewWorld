@@ -1,7 +1,7 @@
 package models
 
 type model struct {
-	Flag int
+	db DataBase
 }
 
 // uniqueModel .
@@ -10,7 +10,9 @@ var uniqueModel *model = nil
 // GetInstance .
 func GetInstance(flag int) (modelInstance *model) {
 	if uniqueModel == nil {
-		uniqueModel = &model{flag}
+		db := Redis{}
+		db.Init()
+		uniqueModel = &model{&db}
 	}
 	return uniqueModel
 }

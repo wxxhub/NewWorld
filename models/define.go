@@ -8,3 +8,8 @@ type Message struct {
 	Commit []string `json:"commit"`
 	Praise int      `json:"praise"`
 }
+
+// DataBase interface .
+type DataBase interface {
+	Init()
+}
