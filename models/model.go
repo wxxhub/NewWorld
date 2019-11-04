@@ -19,7 +19,7 @@ func GetInstance(flag int) (modelInstance *model) {
 
 // AuthenticateUser 验证用户 .
 func (m *model) AuthenticateUser(name, pwd string) (ok bool) {
-	return true
+	return m.db.AuthenticateUser(name, pwd)
 }
 
 //

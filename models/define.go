@@ -12,4 +12,5 @@ type Message struct {
 // DataBase interface .
 type DataBase interface {
 	Init()
+	AuthenticateUser(userID, pwd string) bool
 }
