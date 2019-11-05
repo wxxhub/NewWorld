@@ -9,10 +9,9 @@ var TestData []Message
 
 // GetTestData .
 func GetTestData() []Message {
-	TestData := make([]Message, 100, 100)
+	TestData := make([]Message, 50)
 
-	for i := 0; i < 100; i++ {
-		TestData[i].Name = fmt.Sprintf("Uset%d", i)
+	for i := 0; i < 50; i++ {
 		TestData[i].Text = fmt.Sprintf("Text%d", i)
 		TestData[i].Image = fmt.Sprintf("Image%d", i)
 		commits := make([]string, 2)

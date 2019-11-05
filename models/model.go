@@ -8,10 +8,12 @@ type model struct {
 var uniqueModel *model = nil
 
 // GetInstance .
-func GetInstance(flag int) (modelInstance *model) {
+func GetInstance() (modelInstance *model) {
 	if uniqueModel == nil {
 		db := Redis{}
 		db.Init()
+		// test
+		// db.AddMessage("wxx", "Welcome to NewWorld.", "")
 		uniqueModel = &model{&db}
 	}
 	return uniqueModel
@@ -22,4 +24,37 @@ func (m *model) AuthenticateUser(name, pwd string) (ok bool) {
 	return m.db.AuthenticateUser(name, pwd)
 }
 
-//
+// AddUser .
+func (m *model) AddUser(userID, name, pwd string) AddStatus {
+	return m.db.AddUser(userID, name, pwd)
+}
+
+// AddMessage .
+func (m *model) AddMessage(userID, text, image string) AddStatus {
+	return m.db.AddMessage(userID, text, image)
+}
+
+// AddCommit .
+func (m *model)AddCommit(messageID, userID, commit string) AddStatus {
+	return m.AddCommit(messageID, userID, commit)
+}
+
+// AddConcern .
+func (m *model) AddConcern(currentUserID, goalUserID string) AddStatus {
+	return m.AddConcern(currentUserID, goalUserID)
+}
+
+// AddPraise .
+func (m *model) AddPraise(messageID, userID string) AddStatus {
+	return m.AddPraise(messageID, userID)
+}
+
+// GetMessage .
+func (m *model) GetMessage(messageID string) (Message, bool) {
+	return m.db.GetMessage(messageID)
+}
+
+// GetConcern .
+func (m *model) GetConcern(userID string) []string {
+	return m.db.GetConcern(userID)
+}

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/astaxie/beego"
 
@@ -21,15 +20,15 @@ func (a *APIController) Get() {
 
 // Post .
 func (a *APIController) Post() {
-	name := a.GetString("name")
+	// name := a.GetString("name")
 
-	fmt.Printf("I'm get [%s]\n", name)
-	switch name {
-	case "test_data":
-		a.returnTestData()
-	default:
-		a.returnFalse()
-	}
+	// fmt.Printf("I'm get [%s]\n", name)
+	// switch name {
+	// case "test_data":
+	// 	a.returnTestData()
+	// default:
+	// 	a.returnFalse()
+	// }
 }
 
 // return TestData .
@@ -38,12 +37,5 @@ func (a *APIController) returnTestData() {
 	datas, _ := json.Marshal(testData)
 	// fmt.Println(string(datas))
 	a.Data["json"] = string(datas)
-	a.ServeJSON()
-}
-
-// return false .
-func (a *APIController) returnFalse() {
-	data, _ := json.Marshal("False")
-	a.Data["json"] = string(data)
 	a.ServeJSON()
 }

@@ -13,9 +13,10 @@ import (
 var FilterUser = func(ctx *context.Context) {
 
 	ok := strings.Contains(ctx.Request.RequestURI, "/login")
+	ok2 := strings.Contains(ctx.Request.RequestURI, "/test_message")
 	_, nameOk := ctx.Input.Session("name").(string)
 
-	if !ok && !nameOk {
+	if !ok && !nameOk && !ok2 {
 		ctx.ResponseWriter.WriteHeader(401)
 		ctx.Redirect(302, "/login")
 	}

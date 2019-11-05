@@ -7,11 +7,8 @@
         <script src="/static/js/xml.js"></script>
         <script>
             function Test() {
-                // 请求数据名
-                let postData = "name=test_data"
-                
                 // 发送请求
-                axios.post('/api', postData)
+                axios.post('/test_message', postData)
                 .then (function (response) {
                     startParse(response.data)
                     console.log(response);

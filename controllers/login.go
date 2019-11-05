@@ -14,7 +14,7 @@ type LoginController struct {
 	beego.Controller
 }
 
-var uniqueModel = models.GetInstance(1)
+var uniqueModel = models.GetInstance()
 
 // Get .
 func (l *LoginController) Get() {

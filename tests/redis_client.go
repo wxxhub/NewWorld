@@ -5,6 +5,7 @@ import (
 	"crypto/sha1"
 	"fmt"
 	"os"
+	"reflect"
 
 	"encoding/hex"
 
@@ -15,6 +16,7 @@ func welcome() {
 	fmt.Println("##### welcome to redis client. #####")
 	fmt.Println("##### 1. add user. #####")
 	fmt.Println("##### 2. find user. #####")
+	fmt.Println("##### 3. find message. #####")
 	fmt.Println("##### 0. quit. #####")
 }
 
@@ -74,6 +76,32 @@ func findUser(c *redis.Conn) {
 	}
 }
 
+func findMessage(c *redis.Conn) {
+	var messageID string
+	fmt.Printf("message_id:")
+	fmt.Scanf("%s", &messageID)
+
+	result, err := redis.StringMap((*c).Do("HGETALL", "message:"+messageID))
+
+	if err != nil {
+		fmt.Println("Process find user", messageID, "failed!")
+	} else if result != nil {
+		for key, value := range result {
+			switch key {
+			case "user_id":
+				fmt.Println("用户名:", value, reflect.TypeOf(value))
+			case "text":
+				fmt.Println("文章内容:", value, reflect.TypeOf(value))
+			case "time":
+				fmt.Println("发布时间:", value, reflect.TypeOf(value))
+			}
+			fmt.Println(key, value)
+		}
+	} else {
+		fmt.Println("Find user", messageID, "failed!")
+	}
+}
+
 func process(c *redis.Conn) {
 	w := 1
 
@@ -89,8 +117,9 @@ func process(c *redis.Conn) {
 		case 2:
 			findUser(c)
 			break
+		case 3:
+			findMessage(c)
 		}
-		fmt.Println("you input:", w)
 	}
 }
 

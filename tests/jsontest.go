@@ -62,6 +62,13 @@ func testMap() {
 	}
 	fmt.Printf("%s\n", string(data))
 
+	result := make(map[string]interface{})
+	json.Unmarshal(data, &result)
+	// if err1 != nil {
+	// 	fmt.Printf("json.Unmarshal failed,err:", err1)
+	// 	return
+	// }
+	fmt.Println(result)
 }
 
 func testSlice() {
