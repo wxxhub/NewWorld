@@ -22,13 +22,15 @@ type CommitInfo struct {
 
 // Message .
 type Message struct {
-	UserID   string       `json:"user_id"`
-	UserName string       `json:"user_name"`
-	Text     string       `json:"text"`
-	Time     string       `json:"time"`
-	Image    string       `json:"image"`
-	Commit   []CommitInfo `json:"commits"`
-	Praise   int          `json:"praise"`
+	UserID     string       `json:"user_id"`
+	UserName   string       `json:"user_name"`
+	MessageID  string       `json:"message_id"`
+	Text       string       `json:"text"`
+	Time       string       `json:"time"`
+	Image      string       `json:"image"`
+	Commit     []CommitInfo `json:"commits"`
+	Praise     int          `json:"praise"`
+	HavePraise bool         `json:"have_praise"`
 }
 
 // DataBase interface .
@@ -40,6 +42,7 @@ type DataBase interface {
 	AddCommit(messageID, userID, commit string) AddStatus  // 添加评论
 	AddConcern(currentUserID, goalUserID string) AddStatus // 添加关注
 	AddPraise(messageID, userID string) AddStatus          // 添加点赞
+	CancelPraise(messageID, userID string) AddStatus          // 取消点赞
 	GetMessage(messageID string) (Message, bool)           // 获取消息
 	GetConcern(userID string) []string                     // 获取关注者
 }

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	models "NewWorld/models"
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -13,8 +12,6 @@ import (
 type LoginController struct {
 	beego.Controller
 }
-
-var uniqueModel = models.GetInstance()
 
 // Get .
 func (l *LoginController) Get() {

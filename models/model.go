@@ -1,11 +1,16 @@
 package models
 
+import (
+	"sync"
+)
+
 type model struct {
 	db DataBase
 }
 
 // uniqueModel .
 var uniqueModel *model = nil
+var addPraiseLock sync.Mutex
 
 // GetInstance .
 func GetInstance() (modelInstance *model) {
@@ -35,18 +40,23 @@ func (m *model) AddMessage(userID, text, image string) AddStatus {
 }
 
 // AddCommit .
-func (m *model)AddCommit(messageID, userID, commit string) AddStatus {
-	return m.AddCommit(messageID, userID, commit)
+func (m *model) AddCommit(messageID, userID, commit string) AddStatus {
+	return m.db.AddCommit(messageID, userID, commit)
 }
 
 // AddConcern .
 func (m *model) AddConcern(currentUserID, goalUserID string) AddStatus {
-	return m.AddConcern(currentUserID, goalUserID)
+	return m.db.AddConcern(currentUserID, goalUserID)
+}
+
+// CancelPraise .
+func (m *model) CancelPraise(messageID, userID string) AddStatus {
+	return m.db.CancelPraise(messageID, userID)
 }
 
 // AddPraise .
 func (m *model) AddPraise(messageID, userID string) AddStatus {
-	return m.AddPraise(messageID, userID)
+	return m.db.AddPraise(messageID, userID)
 }
 
 // GetMessage .

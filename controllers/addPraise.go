@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego"
 )
 
+// AddPraiseController .
 type AddPraiseController struct {
 	beego.Controller
 }
@@ -19,8 +20,13 @@ func (a *AddPraiseController) Get() {
 func (a *AddPraiseController) Post() {
 	userID := a.GetString("user_id")
 	messageID := a.GetString("message_id")
-
-	addStatus := models.GetInstance().AddPraise(messageID, userID)
+	havePraise, _ := a.GetBool("praise")
+	var addStatus models.AddStatus
+	if havePraise == true {
+		addStatus = uniqueModel.AddPraise(messageID, userID)
+	} else {
+		addStatus = uniqueModel.CancelPraise(messageID, userID)
+	}
 
 	a.Ctx.ResponseWriter.WriteHeader(int(addStatus))
 }

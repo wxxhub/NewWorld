@@ -118,12 +118,34 @@ func (r *Redis) AddPraise(messageID, userID string) AddStatus {
 	result, err := redis.Int(r.c.Do("SADD", "praise_set:"+messageID, userID))
 
 	if err != nil {
+		logs.Warn("add praise AddFaile!")
 		return AddFaile
 	}
 
 	if result == 0 {
+		logs.Warn("add praise HaveExist!")
 		return HaveExist
 	}
+
+	logs.Info("AddPraise Success!")
+	return AddSuccess
+}
+
+// CancelPraise .
+func (r *Redis) CancelPraise(messageID, userID string) AddStatus {
+	result, err := redis.Int(r.c.Do("SISMEMBER", "praise_set:"+messageID, userID))
+
+	if err != nil {
+		logs.Warn("add praise AddFaile!")
+		return AddFaile
+	}
+
+	if result == 0 {
+		logs.Warn("add praise HaveExist!")
+		return HaveExist
+	}
+
+	logs.Info("AddPraise Success!")
 	return AddSuccess
 }
 

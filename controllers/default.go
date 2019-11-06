@@ -1,8 +1,12 @@
 package controllers
 
 import (
+	models "NewWorld/models"
+
 	"github.com/astaxie/beego"
 )
+
+var uniqueModel = models.GetInstance()
 
 // MainController .
 type MainController struct {

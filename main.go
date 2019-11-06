@@ -25,7 +25,7 @@ var FilterUser = func(ctx *context.Context) {
 
 func main() {
 	//注册过滤器
-	beego.InsertFilter("/*", beego.BeforeRouter, FilterUser)
+	// beego.InsertFilter("/*", beego.BeforeRouter, FilterUser)
 	beego.BConfig.WebConfig.Session.SessionOn = true
 	beego.Run()
 }
