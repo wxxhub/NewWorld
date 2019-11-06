@@ -22,12 +22,13 @@ type CommitInfo struct {
 
 // Message .
 type Message struct {
-	UserID string   `json:"user_id"`
-	Text   string   `json:"text"`
-	Time   string   `json:"time"`
-	Image  string   `json:"image"`
-	Commit []string `json:"commits"`
-	Praise int      `json:"praise"`
+	UserID   string       `json:"user_id"`
+	UserName string       `json:"user_name"`
+	Text     string       `json:"text"`
+	Time     string       `json:"time"`
+	Image    string       `json:"image"`
+	Commit   []CommitInfo `json:"commits"`
+	Praise   int          `json:"praise"`
 }
 
 // DataBase interface .

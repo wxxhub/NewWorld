@@ -170,7 +170,12 @@ func (r *Redis) GetMessage(messageID string) (Message, bool) {
 
 	message.Praise = praiseNum
 
-	message.Commit = commits
+	if commitSize > 0 {
+		message.Commit = make([]CommitInfo, commitSize)
+		for i, commit := range commits {
+			json.Unmarshal([]byte(commit), message.Commit[i])
+		}
+	}
 	return message, true
 }
 
