@@ -35,14 +35,15 @@ type Message struct {
 
 // DataBase interface .
 type DataBase interface {
-	Init()                                                 // 初始化设置
-	AuthenticateUser(userID, pwd string) bool              // 用户验证
-	AddUser(userID, name, pwd string) AddStatus            // 添加用户
-	AddMessage(userID, text, image string) AddStatus       // 添加消息
-	AddCommit(messageID, userID, commit string) AddStatus  // 添加评论
-	AddConcern(currentUserID, goalUserID string) AddStatus // 添加关注
-	AddPraise(messageID, userID string) AddStatus          // 添加点赞
-	CancelPraise(messageID, userID string) AddStatus          // 取消点赞
-	GetMessage(messageID string) (Message, bool)           // 获取消息
-	GetConcern(userID string) []string                     // 获取关注者
+	Init()                                                                // 初始化设置
+	AuthenticateUser(userID, pwd string) (userName, head string, ok bool) // 用户验证
+	AddUser(userID, name, pwd, image string) AddStatus                    // 添加用户
+	AddMessage(userID, text, image string) AddStatus                      // 添加消息
+	AddCommit(messageID, userID, commit string) AddStatus                 // 添加评论
+	AddConcern(currentUserID, goalUserID string) AddStatus                // 添加关注
+	AddPraise(messageID, userID string) AddStatus                         // 添加点赞
+	CancelPraise(messageID, userID string) AddStatus                      // 取消点赞
+	GetMessages(userID string, start, end int) ([]string, error)          // 获取用户的消息列表
+	GetMessage(messageID string) (Message, bool)                          // 获取消息
+	GetConcern(userID string) []string                                    // 获取关注者
 }

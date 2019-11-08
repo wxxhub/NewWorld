@@ -27,27 +27,45 @@ func (r *Redis) Init() {
 }
 
 // AuthenticateUser .
-func (r *Redis) AuthenticateUser(userID, pwd string) bool {
-	result, _ := r.c.Do("HGET", "user:"+userID, "pwd")
+func (r *Redis) AuthenticateUser(userID, pwd string) (userName, head string, ok bool) {
+	messageData, err := redis.StringMap(r.c.Do("HGETALL", "user:"+userID))
 
-	if result == nil {
-		return false
+	if err != nil {
+		return "", "", false
 	}
 
-	data := result.([]byte)
+	var findPwd string
+	var findName string
+	var findHead string
 
-	return pwd == string(data[:])
+	// 获取消息基本信息
+	for key, value := range messageData {
+		switch key {
+		case "pwd":
+			findPwd = value
+		case "name":
+			findName = value
+		case "image":
+			findHead = value
+		}
+	}
+
+	if findPwd != pwd {
+		return "", "", false
+	}
+
+	return findName, findHead, true
 }
 
 // AddUser .
-func (r *Redis) AddUser(userID, name, pwd string) AddStatus {
+func (r *Redis) AddUser(userID, name, pwd, image string) AddStatus {
 	result, err := r.c.Do("HGET", "user:"+userID, "pwd")
 
 	if err != nil || result != nil {
 		return HaveExist
 	}
 
-	_, err2 := r.c.Do("HSET", "user:"+userID, "name", name, "pwd", pwd)
+	_, err2 := r.c.Do("HSET", "user:"+userID, "name", name, "pwd", pwd, "image", image)
 
 	if err2 != nil {
 		return AddFaile
@@ -149,12 +167,16 @@ func (r *Redis) CancelPraise(messageID, userID string) AddStatus {
 	return AddSuccess
 }
 
+// GetMessages .
+func (r *Redis) GetMessages(userID string, start, end int) ([]string, error) {
+	return redis.Strings(r.c.Do("LRANGE", "message_list:"+userID, start, end))
+}
+
 // GetMessage .
 func (r *Redis) GetMessage(messageID string) (Message, bool) {
 	var message Message
-	messageData, err := redis.StringMap(r.c.Do("HGETALL", messageID))
-
-	if err != nil {
+	messageData, err1 := redis.StringMap(r.c.Do("HGETALL", "message:"+messageID))
+	if err1 != nil {
 		return message, false
 	}
 
@@ -198,6 +220,8 @@ func (r *Redis) GetMessage(messageID string) (Message, bool) {
 			json.Unmarshal([]byte(commit), message.Commit[i])
 		}
 	}
+
+	logs.Info("find message success!")
 	return message, true
 }
 

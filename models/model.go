@@ -25,13 +25,13 @@ func GetInstance() (modelInstance *model) {
 }
 
 // AuthenticateUser 验证用户 .
-func (m *model) AuthenticateUser(name, pwd string) (ok bool) {
+func (m *model) AuthenticateUser(name, pwd string) (userName, head string, ok bool) {
 	return m.db.AuthenticateUser(name, pwd)
 }
 
 // AddUser .
-func (m *model) AddUser(userID, name, pwd string) AddStatus {
-	return m.db.AddUser(userID, name, pwd)
+func (m *model) AddUser(userID, name, pwd, image string) AddStatus {
+	return m.db.AddUser(userID, name, pwd, image)
 }
 
 // AddMessage .
@@ -52,6 +52,11 @@ func (m *model) AddConcern(currentUserID, goalUserID string) AddStatus {
 // CancelPraise .
 func (m *model) CancelPraise(messageID, userID string) AddStatus {
 	return m.db.CancelPraise(messageID, userID)
+}
+
+// GetMessages .
+func (m *model) GetMessages(userID string, start, end int) ([]string, error) {
+	return m.db.GetMessages(userID, start, end)
 }
 
 // AddPraise .

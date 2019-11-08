@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -20,17 +21,23 @@ func (l *LoginController) Get() {
 
 // Post .
 func (l *LoginController) Post() {
-	name := l.GetString("name")
+	userID := l.GetString("user_id")
 	pwd := l.GetString("pwd")
 
-	ok := uniqueModel.AuthenticateUser(name, pwd)
+	name, image, ok := uniqueModel.AuthenticateUser(userID, pwd)
 
 	if ok {
+		returnData := make(map[string]string, 2)
+		returnData["name"] = name
+		returnData["image"] = image
+		narshalData, _ := json.Marshal(returnData)
+		l.Data["json"] = string(narshalData)
+		l.ServeJSON()
+
 		uniqueCode := getUniqueCode()
-		println("uniqueCode:" + uniqueCode)
-		l.SetSession("name", name)
+		l.SetSession("userID", userID)
 		l.SetSession("unique_code", uniqueCode)
-		l.Ctx.SetCookie("name", name)
+		l.Ctx.SetCookie("userID", userID)
 		l.Ctx.SetCookie("unique_code", uniqueCode)
 		l.Ctx.Redirect(302, "/")
 	} else {
