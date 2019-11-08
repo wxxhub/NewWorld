@@ -21,6 +21,7 @@ func (a *AddPraiseController) Post() {
 	userID := a.GetString("user_id")
 	messageID := a.GetString("message_id")
 	havePraise, _ := a.GetBool("praise")
+
 	var addStatus models.AddStatus
 	if havePraise == true {
 		addStatus = uniqueModel.AddPraise(messageID, userID)

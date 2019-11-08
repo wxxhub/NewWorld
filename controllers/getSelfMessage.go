@@ -31,6 +31,7 @@ func (g *GetSelfMessageController) Post() {
 			for _, messageID := range list {
 				message, findOk := uniqueModel.GetMessage(messageID)
 				if findOk == true {
+					message.MessageID = messageID
 					messages = append(messages, message)
 				}
 			}
