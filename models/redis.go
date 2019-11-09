@@ -380,7 +380,7 @@ func (r *Redis) GetConcern(userID string) ([]string, error) {
 func (r *Redis) GetConcernMessage(concerns []string, size uint64) []Message {
 	var messages []Message
 	var messageGroup []*list.List
-
+	idMap := make(map[string]string)
 	// 获取关注者的消息
 	for _, userID := range concerns {
 		findMessages, ok := r.GetMessages(userID, 0, size)
@@ -388,6 +388,7 @@ func (r *Redis) GetConcernMessage(concerns []string, size uint64) []Message {
 			IDs := list.New()
 			for _, messageID := range findMessages {
 				id, _ := strconv.Atoi(messageID)
+				idMap[messageID] = userID
 				IDs.PushBack(id)
 			}
 
@@ -407,8 +408,10 @@ func (r *Redis) GetConcernMessage(concerns []string, size uint64) []Message {
 
 		for index < size && e != nil {
 			findMessage, ok := r.GetMessage(strconv.Itoa(e.Value.(int)))
-			
+
 			if ok {
+				findMessage.UserID = idMap[strconv.Itoa(e.Value.(int))]
+				findMessage.UserName, _ = redis.String(r.c.Do("HGET", "user:"+idMap[strconv.Itoa(e.Value.(int))], "name"))
 				messages = append(messages, findMessage)
 			}
 
