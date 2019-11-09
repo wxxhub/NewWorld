@@ -1,12 +1,15 @@
 package main
 
 import (
-	_ "NewWorld/routers"
+	"strings"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
+	"github.com/astaxie/beego/toolbox"
+	_ "github.com/astaxie/beego/toolbox"
 
-	"strings"
+	models "NewWorld/models"
+	_ "NewWorld/routers"
 )
 
 // FilterUser .
@@ -27,5 +30,10 @@ func main() {
 	//注册过滤器
 	// beego.InsertFilter("/*", beego.BeforeRouter, FilterUser)
 	beego.BConfig.WebConfig.Session.SessionOn = true
+	models.HotManager.Init()
+	updateHotTask := toolbox.NewTask("updateHot", "0/30 * * * * *", func() error { models.HotManager.Update(); return nil })
+	toolbox.AddTask("updateHot", updateHotTask)
+	toolbox.StartTask()
+	// go beego.Run()
 	beego.Run()
 }

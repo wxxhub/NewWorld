@@ -64,6 +64,10 @@ func (m *model) AddPraise(messageID, userID string) AddStatus {
 	return m.db.AddPraise(messageID, userID)
 }
 
+func (m *model) HavePraise(messageID, userID string) bool {
+	return m.db.HavePraise(messageID, userID)
+}
+
 // GetMessage .
 func (m *model) GetMessage(messageID string) (Message, bool) {
 	return m.db.GetMessage(messageID)
@@ -72,4 +76,9 @@ func (m *model) GetMessage(messageID string) (Message, bool) {
 // GetConcern .
 func (m *model) GetConcern(userID string) []string {
 	return m.db.GetConcern(userID)
+}
+
+// GetHotMessage .
+func (m *model) GetHotMessage(userID string) []Message {
+	return m.db.GetHotMessage(userID)
 }

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	models "NewWorld/models"
+	"fmt"
 
 	"github.com/astaxie/beego"
 )
@@ -18,10 +19,11 @@ func (a *AddPraiseController) Get() {
 
 // Post .
 func (a *AddPraiseController) Post() {
-	userID := a.GetString("user_id")
+	userID := a.GetSession("user_id").(string)
 	messageID := a.GetString("message_id")
 	havePraise, _ := a.GetBool("praise")
 
+	fmt.Println(userID, messageID)
 	var addStatus models.AddStatus
 	if havePraise == true {
 		addStatus = uniqueModel.AddPraise(messageID, userID)

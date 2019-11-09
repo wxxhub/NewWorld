@@ -32,6 +32,7 @@ func (g *GetSelfMessageController) Post() {
 				message, findOk := uniqueModel.GetMessage(messageID)
 				if findOk == true {
 					message.MessageID = messageID
+					message.HavePraise = uniqueModel.HavePraise(messageID, userID)
 					messages = append(messages, message)
 				}
 			}

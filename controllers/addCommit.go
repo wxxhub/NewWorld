@@ -17,7 +17,8 @@ func (a *AddCommitCotroller) Get() {
 
 // Post .
 func (a *AddCommitCotroller) Post() {
-	userID := a.GetString("user_id")
+	// userID := a.GetString("user_id")
+	userID := a.GetSession("user_id").(string)
 	messageID := a.GetString("message_id")
 	commit := a.GetString("commit")
 

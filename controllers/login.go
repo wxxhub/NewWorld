@@ -35,9 +35,9 @@ func (l *LoginController) Post() {
 		l.ServeJSON()
 
 		uniqueCode := getUniqueCode()
-		l.SetSession("userID", userID)
+		l.SetSession("user_id", userID)
 		l.SetSession("unique_code", uniqueCode)
-		l.Ctx.SetCookie("userID", userID)
+		l.Ctx.SetCookie("user_id", userID)
 		l.Ctx.SetCookie("unique_code", uniqueCode)
 		l.Ctx.Redirect(302, "/")
 	} else {

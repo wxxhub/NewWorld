@@ -23,7 +23,7 @@ func GetTestData() []Message {
 		commits[0].Commit = fmt.Sprintf("Commit%d-1", i)
 		commits[1].Commit = fmt.Sprintf("Commit%d-2", i)
 		TestData[i].Commit = commits
-		TestData[i].Praise = i
+		TestData[i].Praise = uint64(i)
 		TestData[i].Time = "2019-11-05 11:29:18"
 
 		if i%2 == 0 {

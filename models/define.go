@@ -16,8 +16,10 @@ const (
 
 // CommitInfo .
 type CommitInfo struct {
-	UserID string `json:"user_id"`
-	Commit string `json:"commit"`
+	UserID   string `json:"user_id"`
+	UserName string `json:"user_name"`
+	Image    string `json:"image"`
+	Commit   string `json:"commit"`
 }
 
 // Message .
@@ -29,7 +31,7 @@ type Message struct {
 	Time       string       `json:"time"`
 	Image      string       `json:"image"`
 	Commit     []CommitInfo `json:"commits"`
-	Praise     int          `json:"praise"`
+	Praise     uint64       `json:"praise"`
 	HavePraise bool         `json:"have_praise"`
 }
 
@@ -43,7 +45,9 @@ type DataBase interface {
 	AddConcern(currentUserID, goalUserID string) AddStatus                // 添加关注
 	AddPraise(messageID, userID string) AddStatus                         // 添加点赞
 	CancelPraise(messageID, userID string) AddStatus                      // 取消点赞
+	HavePraise(messageID, userID string) bool                             // 是否点赞
 	GetMessages(userID string, start, end int) ([]string, error)          // 获取用户的消息列表
 	GetMessage(messageID string) (Message, bool)                          // 获取消息
 	GetConcern(userID string) []string                                    // 获取关注者
+	GetHotMessage(userID string) []Message                               // 获取热点
 }
