@@ -21,9 +21,9 @@ func (g *GetSelfMessageController) Get() {
 
 // Post .
 func (g *GetSelfMessageController) Post() {
-	userID := g.GetString("user_id")
-	start, okStart := g.GetInt("start")
-	end, okEnd := g.GetInt("end")
+	userID := g.GetSession("user_id").(string)
+	start, okStart := g.GetUint64("start")
+	end, okEnd := g.GetUint64("end")
 	messages := make([]models.Message, 0)
 	if okStart == nil && okEnd == nil {
 		list, ok := uniqueModel.GetMessages(userID, start, end)

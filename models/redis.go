@@ -1,6 +1,7 @@
 package models
 
 import (
+	list "container/list"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -180,29 +181,29 @@ func (r *Redis) AuthenticateUser(userID, pwd string) (userName, head string, ok 
 }
 
 // AddUser .
-func (r *Redis) AddUser(userID, name, pwd, image string) AddStatus {
+func (r *Redis) AddUser(userID, name, pwd, image string) ProcessStatus {
 	result, err := r.c.Do("HGET", "user:"+userID, "pwd")
 
 	if err != nil || result != nil {
-		return HaveExist
+		return HAVEEXIST
 	}
 
 	_, err2 := r.c.Do("HSET", "user:"+userID, "name", name, "pwd", pwd, "image", image)
 
 	if err2 != nil {
-		return AddFaile
+		return FAILED
 	}
-	return AddSuccess
+	return SUCCESS
 }
 
 // AddMessage .
-func (r *Redis) AddMessage(userID, text, image string) AddStatus {
+func (r *Redis) AddMessage(userID, text, image string) ProcessStatus {
 	// var messageCounter uint64
 	messageCounter, err := redis.Int64(r.c.Do("GET", "message_counter"))
 
 	if err != nil {
 		logs.Warn("Add message failed 1!")
-		return AddFaile
+		return FAILED
 	}
 
 	messageIndex := fmt.Sprintf("message:%d", messageCounter)
@@ -220,15 +221,15 @@ func (r *Redis) AddMessage(userID, text, image string) AddStatus {
 
 	if err1 != nil {
 		logs.Warn("Add message failed 3!")
-		return AddFaile
+		return FAILED
 	}
 
 	logs.Info("Add message success.")
-	return AddSuccess
+	return SUCCESS
 }
 
 // AddCommit .
-func (r *Redis) AddCommit(messageID, userID, commit string) AddStatus {
+func (r *Redis) AddCommit(messageID, userID, commit string) ProcessStatus {
 	var info CommitInfo
 	fmt.Println(messageID, userID, commit)
 	info.UserID = userID
@@ -236,44 +237,54 @@ func (r *Redis) AddCommit(messageID, userID, commit string) AddStatus {
 	codeData, err := json.Marshal(info)
 	if err != nil {
 		logs.Warn("Marshal commit failed!")
-		return AddFaile
+		return FAILED
 	}
 	_, err1 := r.c.Do("LPUSH", "commits:"+messageID, string(codeData))
 	if err1 != nil {
 		logs.Warn("add commit failed!")
-		return AddFaile
+		return FAILED
 	}
 
 	logs.Info("add commit success!")
-	return AddSuccess
+	return SUCCESS
 }
 
 // AddConcern .
-func (r *Redis) AddConcern(currentUserID, goalUserID string) AddStatus {
-	_, err := r.c.Do("LPUSH", "user_concern:"+currentUserID, goalUserID)
+func (r *Redis) AddConcern(currentUserID, goalUserID string) ProcessStatus {
+	_, err := r.c.Do("SADD", "user_concern:"+currentUserID, goalUserID)
 
 	if err != nil {
-		return AddFaile
+		return FAILED
 	}
-	return AddSuccess
+	return SUCCESS
+}
+
+// CancelConcern .
+func (r *Redis) CancelConcern(currentUserID, goalUserID string) ProcessStatus {
+	_, err := r.c.Do("SREM", "user_concern:"+currentUserID, goalUserID)
+
+	if err != nil {
+		return FAILED
+	}
+	return SUCCESS
 }
 
 // AddPraise .
-func (r *Redis) AddPraise(messageID, userID string) AddStatus {
+func (r *Redis) AddPraise(messageID, userID string) ProcessStatus {
 	result, err := redis.Int(r.c.Do("SADD", "praise_set:"+messageID, userID))
 
 	if err != nil {
-		logs.Warn("add praise AddFaile!")
-		return AddFaile
+		logs.Warn("add praise FAILED!")
+		return FAILED
 	}
 
 	if result == 0 {
-		logs.Warn("add praise HaveExist!")
-		return HaveExist
+		logs.Warn("add praise HAVEEXIST!")
+		return HAVEEXIST
 	}
 
 	logs.Info("AddPraise Success!")
-	return AddSuccess
+	return SUCCESS
 }
 
 // HavePraise .
@@ -283,20 +294,20 @@ func (r *Redis) HavePraise(messageID, userID string) bool {
 }
 
 // CancelPraise .
-func (r *Redis) CancelPraise(messageID, userID string) AddStatus {
+func (r *Redis) CancelPraise(messageID, userID string) ProcessStatus {
 	_, err := redis.Int(r.c.Do("SREM", "praise_set:"+messageID, userID))
 
 	if err != nil {
 		logs.Warn("cancel praise faile!")
-		return AddFaile
+		return FAILED
 	}
 
 	logs.Info("CancelPraise Success!")
-	return AddSuccess
+	return SUCCESS
 }
 
 // GetMessages .
-func (r *Redis) GetMessages(userID string, start, end int) ([]string, error) {
+func (r *Redis) GetMessages(userID string, start, end uint64) ([]string, error) {
 	return redis.Strings(r.c.Do("LRANGE", "message_list:"+userID, start, end))
 }
 
@@ -361,12 +372,112 @@ func (r *Redis) GetMessage(messageID string) (Message, bool) {
 }
 
 // GetConcern .
-func (r *Redis) GetConcern(userID string) []string {
-	var concerns []string
-	return concerns
+func (r *Redis) GetConcern(userID string) ([]string, error) {
+	return redis.Strings(r.c.Do("SMEMBERS", "user_concern:"+userID))
+}
+
+// GetConcernMessage .
+func (r *Redis) GetConcernMessage(concerns []string, size uint64) []Message {
+	var messages []Message
+	var messageGroup []*list.List
+
+	// 获取关注者的消息
+	for _, userID := range concerns {
+		findMessages, ok := r.GetMessages(userID, 0, size)
+		if ok == nil {
+			IDs := list.New()
+			for _, messageID := range findMessages {
+				id, _ := strconv.Atoi(messageID)
+				IDs.PushBack(id)
+			}
+
+			if IDs.Len() >= 0 {
+
+				messageGroup = append(messageGroup, IDs)
+				// messageGroup.PushBack(IDs)
+			}
+		}
+	}
+
+	// 关注者的消息排序
+	if len(messageGroup) > 0 {
+		sortIDs := MergeSorts(messageGroup, size)
+		index := uint64(0)
+		e := sortIDs.Front()
+
+		for index < size && e != nil {
+			findMessage, ok := r.GetMessage(strconv.Itoa(e.Value.(int)))
+			
+			if ok {
+				messages = append(messages, findMessage)
+			}
+
+			index++
+			e = e.Next()
+		}
+	}
+
+	return messages
 }
 
 // GetHotMessage .
 func (r *Redis) GetHotMessage(userID string) []Message {
 	return HotManager.GetHotMessage()
+}
+
+// MergeSorts .
+func MergeSorts(messageGroup []*list.List, size uint64) *list.List {
+	// for messageGroup.Len() > 1 {
+	// 	list1 := messageGroup.Front()
+	// 	messageGroup.Remove(list1)
+	// 	list2 := messageGroup.Front()
+	// 	messageGroup.Remove(list2)
+
+	// 	messageGroup.PushBackList(MergeTwoSort(list1, list2))
+	// }
+
+	for len(messageGroup) > 1 {
+
+		list1 := messageGroup[0]
+		list2 := messageGroup[1]
+
+		l := len(messageGroup)
+
+		if l > 2 {
+			messageGroup = messageGroup[2:]
+		} else {
+			messageGroup = messageGroup[l:]
+		}
+
+		messageGroup = append(messageGroup, MergeTwoSort(list1, list2))
+	}
+
+	return messageGroup[0]
+}
+
+// MergeTwoSort .
+func MergeTwoSort(list1, list2 *list.List) *list.List {
+	result := list.New()
+
+	for {
+		if list1.Front().Value.(int) > list1.Front().Value.(int) {
+			result.PushBack(list1.Front().Value.(int))
+			list1.Remove(list1.Front())
+		} else {
+			result.PushBack(list2.Front().Value.(int))
+			list1.Remove(list2.Front())
+		}
+
+		if list1.Len() == 0 {
+			result.PushBackList(list2)
+			break
+		}
+
+		if list2.Len() == 0 {
+			result.PushBackList(list1)
+			break
+		}
+	}
+
+	return result
 }

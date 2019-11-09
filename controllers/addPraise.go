@@ -24,7 +24,7 @@ func (a *AddPraiseController) Post() {
 	havePraise, _ := a.GetBool("praise")
 
 	fmt.Println(userID, messageID)
-	var addStatus models.AddStatus
+	var addStatus models.ProcessStatus
 	if havePraise == true {
 		addStatus = uniqueModel.AddPraise(messageID, userID)
 	} else {

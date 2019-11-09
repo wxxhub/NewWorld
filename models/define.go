@@ -1,17 +1,17 @@
 package models
 
-// AddStatus .
-type AddStatus int8
+// ProcessStatus .
+type ProcessStatus int8
 
 const (
-	// AddSuccess 添加成功 .
-	AddSuccess AddStatus = 0
+	// SUCCESS 添加成功 .
+	SUCCESS ProcessStatus = 0
 
-	// AddFaile 添加失败 .
-	AddFaile AddStatus = 1
+	// FAILED 添加失败 .
+	FAILED ProcessStatus = 1
 
-	// HaveExist 已经存在 .
-	HaveExist AddStatus = 2
+	// HAVEEXIST 已经存在 .
+	HAVEEXIST ProcessStatus = 2
 )
 
 // CommitInfo .
@@ -39,15 +39,17 @@ type Message struct {
 type DataBase interface {
 	Init()                                                                // 初始化设置
 	AuthenticateUser(userID, pwd string) (userName, head string, ok bool) // 用户验证
-	AddUser(userID, name, pwd, image string) AddStatus                    // 添加用户
-	AddMessage(userID, text, image string) AddStatus                      // 添加消息
-	AddCommit(messageID, userID, commit string) AddStatus                 // 添加评论
-	AddConcern(currentUserID, goalUserID string) AddStatus                // 添加关注
-	AddPraise(messageID, userID string) AddStatus                         // 添加点赞
-	CancelPraise(messageID, userID string) AddStatus                      // 取消点赞
+	AddUser(userID, name, pwd, image string) ProcessStatus                // 添加用户
+	AddMessage(userID, text, image string) ProcessStatus                  // 添加消息
+	AddCommit(messageID, userID, commit string) ProcessStatus             // 添加评论
+	AddConcern(currentUserID, goalUserID string) ProcessStatus            // 添加关注
+	CancelConcern(currentUserID, goalUserID string) ProcessStatus         // 取消关注
+	AddPraise(messageID, userID string) ProcessStatus                     // 添加点赞
+	CancelPraise(messageID, userID string) ProcessStatus                  // 取消点赞
 	HavePraise(messageID, userID string) bool                             // 是否点赞
-	GetMessages(userID string, start, end int) ([]string, error)          // 获取用户的消息列表
+	GetMessages(userID string, start, end uint64) ([]string, error)       // 获取用户的消息列表
 	GetMessage(messageID string) (Message, bool)                          // 获取消息
-	GetConcern(userID string) []string                                    // 获取关注者
-	GetHotMessage(userID string) []Message                               // 获取热点
+	GetConcern(userID string) ([]string, error)                                    // 获取关注者
+	GetConcernMessage(concerns []string, size uint64) []Message           // 获取关注者的消息
+	GetHotMessage(userID string) []Message                                // 获取热点
 }
