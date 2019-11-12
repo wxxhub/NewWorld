@@ -381,9 +381,11 @@ func (r *Redis) GetConcernMessage(concerns []string, size uint64) []Message {
 	var messages []Message
 	var messageGroup []*list.List
 	idMap := make(map[string]string)
+	logs.Info("获取关注者的消息")
 	// 获取关注者的消息
 	for _, userID := range concerns {
 		findMessages, ok := r.GetMessages(userID, 0, size)
+		logs.Info("findMessages")
 		if ok == nil {
 			IDs := list.New()
 			for _, messageID := range findMessages {
@@ -393,23 +395,25 @@ func (r *Redis) GetConcernMessage(concerns []string, size uint64) []Message {
 			}
 
 			if IDs.Len() >= 0 {
-
 				messageGroup = append(messageGroup, IDs)
 				// messageGroup.PushBack(IDs)
 			}
 		}
 	}
 
+	logs.Info("关注者的消息排序")
 	// 关注者的消息排序
 	if len(messageGroup) > 0 {
+		logs.Info("MergeSorts")
 		sortIDs := MergeSorts(messageGroup, size)
 		index := uint64(0)
 		e := sortIDs.Front()
-
+		logs.Info("findMessage")
 		for index < size && e != nil {
 			findMessage, ok := r.GetMessage(strconv.Itoa(e.Value.(int)))
 
 			if ok {
+				findMessage.MessageID = strconv.Itoa(e.Value.(int))
 				findMessage.UserID = idMap[strconv.Itoa(e.Value.(int))]
 				findMessage.UserName, _ = redis.String(r.c.Do("HGET", "user:"+idMap[strconv.Itoa(e.Value.(int))], "name"))
 				messages = append(messages, findMessage)
@@ -440,17 +444,11 @@ func MergeSorts(messageGroup []*list.List, size uint64) *list.List {
 	// }
 
 	for len(messageGroup) > 1 {
-
+		logs.Info(len(messageGroup))
 		list1 := messageGroup[0]
 		list2 := messageGroup[1]
 
-		l := len(messageGroup)
-
-		if l > 2 {
-			messageGroup = messageGroup[2:]
-		} else {
-			messageGroup = messageGroup[l:]
-		}
+		messageGroup = messageGroup[2:]
 
 		messageGroup = append(messageGroup, MergeTwoSort(list1, list2))
 	}
@@ -463,12 +461,17 @@ func MergeTwoSort(list1, list2 *list.List) *list.List {
 	result := list.New()
 
 	for {
-		if list1.Front().Value.(int) > list1.Front().Value.(int) {
-			result.PushBack(list1.Front().Value.(int))
-			list1.Remove(list1.Front())
+		logs.Info(list1.Len(), list2.Len())
+		if list1.Front().Value.(int) > list2.Front().Value.(int) {
+			e := list1.Front()
+			result.PushBack(e.Value.(int))
+			list1.Remove(e)
+			logs.Info("list1.Remove(e)")
 		} else {
-			result.PushBack(list2.Front().Value.(int))
-			list1.Remove(list2.Front())
+			e := list2.Front()
+			result.PushBack(e.Value.(int))
+			list2.Remove(e)
+			logs.Info("list2.Remove(e)")
 		}
 
 		if list1.Len() == 0 {
