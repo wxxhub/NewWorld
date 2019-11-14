@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>NewWolrd</title>
+<meta http-equiv="content-Type" content="text/html" charset="utf-8">
+<link rel="stylesheet" type="text/css" href="/static/css/logon.css">
+
+<script type="text/javascript" src="/static/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/js/logon.js"></script>
+
+</head>
+<body>
+	<div style="text-align: center;">
+		<div class="main">
+			<div class="logo">
+				<img src="/static/img/icon_max.png" class="logo_image">
+			</div>
+			<div class="user_data">
+				<div>
+					<a class="tip" >NewWorld</a>
+					<span></span>
+					<a class="tip" >用户注册</a>
+				</div>
+				<form id="user_form" method="POST" onsubmit="return false">
+					<div class="item">
+						<input type="text" name="email" id="email" placeholder="用户邮箱" class="user_input">
+					</div>
+
+					<div class="item">
+						<input type="text" name="user_id" id="user_id" placeholder="用户ID" class="user_input">
+					</div>
+
+					<div class="item">
+						<input type="text" name="user_name" id="user_name" placeholder="用户昵称" class="user_input">
+					</div>
+					
+					<div class="item">
+						<input type="password" name="pwd" id="pwd" placeholder="密码" class="user_input" maxlength="16">
+					</div>
+					
+					<div class="item">
+						<input type="password" name="ensure_pwd" id="ensure_pwd" placeholder="确认密码" class="user_input" maxlength="16" onfocus="pwdCheck()">
+						<br>
+						<span class="help_inline" style="color: red; display: none;" id="help_inline">两次密码不一致</span>
+					</div>
+					
+					<div class="item">
+						<input type="submit" name="sub" value="注册" class="data_sub" onclick="logon()">
+					</div>
+				</form>
+			</div>
+			<div class="welcome">
+				<p>Welcome to NewWolrd</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
