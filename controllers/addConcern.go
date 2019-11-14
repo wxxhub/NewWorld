@@ -29,5 +29,15 @@ func (a *AddConcernController) Post() {
 		addStatus = uniqueModel.CancelConcern(userID, goalUserID)
 	}
 
-	a.Ctx.ResponseWriter.WriteHeader(int(addStatus))
+	var code int
+	if addStatus == models.FAILED {
+		code = 214
+	} else if addStatus == models.HAVEEXIST {
+		code = 211
+	} else {
+		code = 200
+	}
+	// a.Ctx.ResponseWriter.Header().Set("Content-type", "application/text")
+	a.Ctx.ResponseWriter.WriteHeader(code)
+	// a.Ctx.ResponseWriter.Write([]byte(""))
 }

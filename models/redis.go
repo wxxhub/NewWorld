@@ -251,6 +251,12 @@ func (r *Redis) AddCommit(messageID, userID, commit string) ProcessStatus {
 
 // AddConcern .
 func (r *Redis) AddConcern(currentUserID, goalUserID string) ProcessStatus {
+	_, err0 := r.c.Do("HGETALL", "user:"+goalUserID)
+
+	if err0 == nil {
+		return NOEXIST
+	}
+
 	_, err := r.c.Do("SADD", "user_concern:"+currentUserID, goalUserID)
 
 	if err != nil {
