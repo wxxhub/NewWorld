@@ -40,12 +40,18 @@ function logonCheck() {
 
 function logon() {
 	if (logonCheck() == true) {
+		var postData = {
+			"user_id":user_id.value,
+			"name":user_name.value,
+			"pwd":hex_sha1(pwd.value),
+		};
 		jQuery.ajax({
 			type: "POST",
 			async: false,
 			dataType: "json",
 			url: "/logon",
-			data: $('#user_form').serialize(),
+			// data: $('#user_form').serialize(),
+			data: postData,
 			statusCode: {
 				200:function(){
 					alert("注册成功!");
