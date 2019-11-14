@@ -394,7 +394,7 @@ func (r *Redis) GetConcernMessage(concerns []string, size uint64) []Message {
 				IDs.PushBack(id)
 			}
 
-			if IDs.Len() >= 0 {
+			if IDs.Len() > 0 {
 				messageGroup = append(messageGroup, IDs)
 				// messageGroup.PushBack(IDs)
 			}
