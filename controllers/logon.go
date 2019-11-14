@@ -2,7 +2,6 @@ package controllers
 
 import (
 	models "NewWorld/models"
-	"fmt"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
@@ -25,12 +24,12 @@ func (l *LogonController) Post() {
 	name := l.GetString("name")
 	ID := l.GetString("user_id")
 	pwd := l.GetString("pwd")
-	fmt.Println(name, ID, pwd)
+	// fmt.Println(name, ID, pwd)
 	image := l.GetString("image")
 
 	addStatus := models.GetInstance().AddUser(ID, name, pwd, image)
 
-	fmt.Println(addStatus)
+	// fmt.Println(addStatus)
 	if addStatus == models.HAVEEXIST {
 		l.Ctx.ResponseWriter.WriteHeader(204)
 	} else {

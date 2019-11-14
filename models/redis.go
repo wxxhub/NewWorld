@@ -231,7 +231,7 @@ func (r *Redis) AddMessage(userID, text, image string) ProcessStatus {
 // AddCommit .
 func (r *Redis) AddCommit(messageID, userID, commit string) ProcessStatus {
 	var info CommitInfo
-	fmt.Println(messageID, userID, commit)
+	// fmt.Println(messageID, userID, commit)
 	info.UserID = userID
 	info.Commit = commit
 	codeData, err := json.Marshal(info)
