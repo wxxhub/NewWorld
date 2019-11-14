@@ -12,6 +12,9 @@ const (
 
 	// HAVEEXIST 已经存在 .
 	HAVEEXIST ProcessStatus = 2
+
+	// NOEXIST 不存在
+	NOEXIST ProcessStatus = 3
 )
 
 // CommitInfo .
@@ -49,7 +52,7 @@ type DataBase interface {
 	HavePraise(messageID, userID string) bool                             // 是否点赞
 	GetMessages(userID string, start, end uint64) ([]string, error)       // 获取用户的消息列表
 	GetMessage(messageID string) (Message, bool)                          // 获取消息
-	GetConcern(userID string) ([]string, error)                                    // 获取关注者
+	GetConcern(userID string) ([]string, error)                           // 获取关注者
 	GetConcernMessage(concerns []string, size uint64) []Message           // 获取关注者的消息
 	GetHotMessage(userID string) []Message                                // 获取热点
 }
