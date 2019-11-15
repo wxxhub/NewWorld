@@ -18,7 +18,8 @@ func (a *AddMessageController) Get() {
 
 // Post .
 func (a *AddMessageController) Post() {
-	userID := a.GetString("user_id")
+	// userID := a.GetString("user_id")
+	userID := a.GetSession("user_id").(string)
 	text := a.GetString("text")
 	image := a.GetString("image")
 
